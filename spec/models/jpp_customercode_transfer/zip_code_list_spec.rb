@@ -4,6 +4,36 @@ require 'spec_helper'
 describe JppCustomercodeTransfer::ZipCodeList do
   fixtures :jpp_customercode_transfer_zip_code_lists
 
+  context "import zipcode file" do
+    it "should raise argument error (1)" do
+      proc {
+        JppCustomercodeTransfer::ZipCodeList.import
+      }.should raise_error(ArgumentError, "filename is blank.")
+
+    end
+
+    it "should raise argument error (2)" do
+      proc {
+        JppCustomercodeTransfer::ZipCodeList.import("")
+      }.should raise_error(ArgumentError, "filename is blank.")
+
+    end
+
+    it "should raise argument error (no exist file)" do
+      proc {
+        JppCustomercodeTransfer::ZipCodeList.import("nofile.csv")
+      }.should raise_error(Errno::ENOENT, "No such file or directory - nofile.csv")
+
+    end
+
+    it "should import success 2 records." do
+      JppCustomercodeTransfer::ZipCodeList.import("temp_ken_all.csv")
+
+    end
+
+
+  end
+
   context "generate barcode" do
 
     it "shoud raise exception (1)" do

@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+require 'nkf'
+require 'csv'
+
 class String
   def strip_hypen_front_alphabet
     s = ""
@@ -67,6 +70,10 @@ end
 
 module JppCustomercodeTransfer
   class ZipCodeList < ActiveRecord::Base
+    attr_accessible :union_code, :zipcode, :prefectrure_name_kana, :city_name_kana,
+                    :region_name_kana, :prefecture_name, :city_name, :region_name,
+                    :flag10, :flag11, :flag12, :flag13, :flag14, :update_flag
+
     def self.generate_japanpost_customer_code(zip_code, address)
       # see http://www.post.japanpost.jp/zipcode/zipmanual/p19.html
       sp1 = ["丁目","丁","番地","番","号","地割","線","の","ノ"]
@@ -217,6 +224,10 @@ module JppCustomercodeTransfer
     end
 
     def self.import(filename = nil)
+      if filename.blank?
+        raise ArgumentError, "filename is blank."
+      end
+
       zipcode_import = self.new
       rows = zipcode_import.open_import_file(filename)
       ZipCodeList.delete_all
@@ -238,36 +249,27 @@ module JppCustomercodeTransfer
         h[:flag13] = row[12]
         h[:flag14] = row[13]
         h[:update_flag] = row[14]
-        ZipCodeList.create!(h)
+        ZipCodeList.new(h).save!
 
         if row_num % 200 == 0
-          Sunspot.commit
           GC.start
           puts "#{row_num} success."
         end
       end
-      #end
-      Sunspot.commit
     end
 
     def open_import_file(upload_file_path)
       tempfile = Tempfile.new('zipcode_import_file')
-      #TODO
       open(upload_file_path){|f|
         f.each{|line|
-          tempfile.puts(NKF.nkf('-w -Lu', line))
+          tempfile.puts(NKF.nkf('-W -s', line))
         }
       }
       tempfile.close
 
-      file = CSV.open(tempfile.path, :col_sep => "\t")
-      #header = file.first
-      #rows = CSV.open(tempfile.path, :headers => header, :col_sep => "\t")
       rows = CSV.open(tempfile.path)
 
-      #ResourceImportResult.create(:resource_import_file => self, :body => header.join("\t"), :error_msg => "HEADER DATA")
       tempfile.close(true)
-      file.close
       rows
     end
   end
