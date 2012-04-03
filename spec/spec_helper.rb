@@ -18,6 +18,7 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
 
+  config.mock_with :rspec
   config.fixture_path = "#{::Rails.root}/../../spec/fixtures"
-  config.use_transactional_fixtures = true
+  #config.use_transactional_fixtures = true
 end

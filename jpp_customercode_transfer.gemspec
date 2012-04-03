@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = JppCustomercodeTransfer::VERSION
   s.authors     = ["Akifumi NAKAMURA"]
   s.email       = ["tmpz84@gmail.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "https://github.com/tmpz84/jpp_customercode_transfer"
   s.summary     = "transfer address to japan postal customercode."
   s.description = "transfer address to japan postal customercode."
 
