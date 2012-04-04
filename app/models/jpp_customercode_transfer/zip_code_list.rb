@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 require 'nkf'
 require 'csv'
+require 'pp'
 
 class String
   def strip_hypen_front_alphabet
@@ -256,7 +257,7 @@ module JppCustomercodeTransfer
         h[:update_flag] = row[14]
         ZipCodeList.new(h).save!
 
-        if row_num % 200 == 0
+        if row_num > 0 && row_num % 500 == 0
           GC.start
           puts "#{row_num} success."
         end
@@ -264,15 +265,16 @@ module JppCustomercodeTransfer
     end
 
     def open_import_file(upload_file_path)
+      rows = []
       tempfile = Tempfile.new('zipcode_import_file')
       open(upload_file_path){|f|
         f.each{|line|
-          tempfile.puts(NKF.nkf('-W -s', line))
+          tempfile.puts(NKF.nkf('-wS -Lw', line))
         }
       }
       tempfile.close
 
-      rows = CSV.open(tempfile.path)
+      rows = CSV.open(tempfile.path, 'r')
 
       tempfile.close(true)
       rows
