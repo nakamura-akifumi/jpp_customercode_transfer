@@ -4,6 +4,10 @@ require 'spec_helper'
 describe JppCustomercodeTransfer::ZipCodeList do
   fixtures :jpp_customercode_transfer_zip_code_lists
 
+  before(:all) do
+    @importfile_path = "#{::Rails.root}/../../spec/csv"
+  end
+
   context "import zipcode file" do
     it "should raise argument error (1)" do
       proc {
@@ -27,8 +31,18 @@ describe JppCustomercodeTransfer::ZipCodeList do
     end
 
     it "should import success 2 records." do
-      JppCustomercodeTransfer::ZipCodeList.import("temp_ken_all.csv")
+      JppCustomercodeTransfer::ZipCodeList.import(File.join([@importfile_path, "temp_ken_all.sjis.csv"]))
+      JppCustomercodeTransfer::ZipCodeList.find(:all).count.should eq 2
+      #zip_code_lists = JppCustomercodeTransfer::ZipCodeList.find(:all, :order=>'zipcode asc')
+      zip_code_lists = JppCustomercodeTransfer::ZipCodeList.find(:all)
 
+      zip_code_lists.first.union_code.should eq "01101"
+      zip_code_lists.first.zipcode5.should eq "060  "
+      zip_code_lists.first.zipcode.should eq "0600000"
+
+      zip_code_lists.second.union_code.should eq "01101"
+      zip_code_lists.second.zipcode5.should eq "064  "
+      zip_code_lists.second.zipcode.should eq "0640941"
     end
 
 

@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(:version => 20120401133633) do
 
   create_table "jpp_customercode_transfer_zip_code_lists", :force => true do |t|
-    t.integer  "union_code"
+    t.string   "union_code"
     t.string   "zipcode5"
     t.string   "zipcode"
     t.string   "prefectrure_name_kana"

@@ -70,7 +70,7 @@ end
 
 module JppCustomercodeTransfer
   class ZipCodeList < ActiveRecord::Base
-    attr_accessible :union_code, :zipcode, :prefectrure_name_kana, :city_name_kana,
+    attr_accessible :union_code, :zipcode5, :zipcode, :prefectrure_name_kana, :city_name_kana,
                     :region_name_kana, :prefecture_name, :city_name, :region_name,
                     :flag10, :flag11, :flag12, :flag13, :flag14, :update_flag
 
@@ -212,6 +212,10 @@ module JppCustomercodeTransfer
         end
       end
 
+      # TODO 
+      #if asub.length > 20
+      #  asus = asub[0, 20]
+      #end
       return asub
     end
     def build_asub(*args)
@@ -236,6 +240,7 @@ module JppCustomercodeTransfer
       rows.each_with_index do |row, row_num|
         h = {}
         h[:union_code] = row[0]
+        h[:zipcode5] = row[1]
         h[:zipcode] = row[2]
         h[:prefectrure_name_kana] = row[3]
         h[:city_name_kana] = row[4]
